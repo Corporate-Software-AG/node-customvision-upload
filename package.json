@@ -1,0 +1,24 @@
+{
+  "name": "customvision-upload",
+  "version": "1.0.0",
+  "description": "",
+  "main": "uplaod.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tvonment/node-customvision-upload.git"
+  },
+  "author": "Thomas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tvonment/node-customvision-upload/issues"
+  },
+  "homepage": "https://github.com/tvonment/node-customvision-upload#readme",
+  "dependencies": {
+    "@azure/cognitiveservices-customvision-prediction": "^5.1.2",
+    "@azure/cognitiveservices-customvision-training": "^5.2.0",
+    "limiter": "^2.1.0"
+  }
+}
