@@ -17,7 +17,7 @@ async function sleep(milliseconds) {
 }
 
 async function upload(projectId, path, tagId) {
-    console.log("upload " + path)
+    console.log("upload " + path + " to Tag: " + tagId)
     try {
         let response = await trainer.createImagesFromData(projectId, fs.readFileSync(path), { tagIds: [tagId] })
         console.log("Successful: " + response.isBatchSuccessful, "Reason: " + response.images[0].status);
@@ -30,7 +30,7 @@ async function upload(projectId, path, tagId) {
     }
 }
 
-async function upload() {
+async function uploadImages() {
     console.log("Start Upload...");
     let tags = await trainer.getTags(projectId);
     const dirs = fs.readdirSync(sampleDataRoot)
@@ -41,14 +41,12 @@ async function upload() {
         if (!tag) {
             console.log("Creating tag " + tagName);
             tag = await trainer.createTag(projectId, tagName)
-            console.log(tag);
             tags.push(tag);
             await sleep(250);
         }
         let imageDir = fs.readdirSync(`${sampleDataRoot}/${d}`)
         let i = 0;
         for (const f of imageDir) {
-            console.log(tag)
             if (i < maxPerTag) {
                 let path = `${sampleDataRoot}/${d}/${f}`;
                 upload(projectId, path, tag.id)
@@ -60,8 +58,23 @@ async function upload() {
     console.log("Finish Upload...");
 }
 
+async function training() {
+    console.log("Training...");
+    let trainingIteration = await trainer.trainProject(projectId);
+
+    // Wait for training to complete
+    console.log("Training started...");
+    while (trainingIteration.status == "Training") {
+        console.log("Training status: " + trainingIteration.status);
+        await sleep(1000);
+        trainingIteration = await trainer.getIteration(projectId, trainingIteration.id)
+    }
+    console.log("Training status: " + trainingIteration.status);
+}
+
 (async () => {
     console.log("Start Script...");
-    await upload();
+    await uploadImages();
+    //await training();
     console.log("Finish Script...");
 })()
