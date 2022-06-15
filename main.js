@@ -34,7 +34,7 @@ async function uploadImages() {
     let tags = await trainer.getTags(projectId);
     const dirs = fs.readdirSync(sampleDataRoot)
     for (const d of dirs) {
-        let tagName = d.substring(d.indexOf('-') + 1).replace("_", " ");
+        let tagName = d.substring(d.indexOf('-') + 1).replace(/_/g, " ");
         console.log("Start at: " + d + " with tag: " + tagName)
         let tag = tags.filter(t => t.name === tagName)[0]
         if (!tag) {
