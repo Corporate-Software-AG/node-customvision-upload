@@ -10,7 +10,6 @@ const credentials = new msRest.ApiKeyCredentials({ inHeader: { "Training-key": t
 const trainer = new TrainingApi.TrainingAPIClient(credentials, trainingEndpoint);
 
 const sampleDataRoot = "Images";
-const maxPerTag = 50;
 
 async function sleep(milliseconds) {
     return new Promise((resolve) => setTimeout(resolve, milliseconds))
@@ -35,7 +34,7 @@ async function uploadImages() {
     let tags = await trainer.getTags(projectId);
     const dirs = fs.readdirSync(sampleDataRoot)
     for (const d of dirs) {
-        let tagName = d.substring(d.indexOf('-') + 1)
+        let tagName = d.substring(d.indexOf('-') + 1).replace("_", " ");
         console.log("Start at: " + d + " with tag: " + tagName)
         let tag = tags.filter(t => t.name === tagName)[0]
         if (!tag) {
@@ -45,14 +44,10 @@ async function uploadImages() {
             await sleep(250);
         }
         let imageDir = fs.readdirSync(`${sampleDataRoot}/${d}`)
-        let i = 0;
         for (const f of imageDir) {
-            if (i < maxPerTag) {
-                let path = `${sampleDataRoot}/${d}/${f}`;
-                upload(projectId, path, tag.id)
-                await sleep(250);
-            }
-            i++;
+             let path = `${sampleDataRoot}/${d}/${f}`;
+             upload(projectId, path, tag.id)
+             await sleep(250);
         };
     };
     console.log("Finish Upload...");
